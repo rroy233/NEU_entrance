@@ -38,11 +38,7 @@ $form = "
 
 <div class='mdui-container doc-container doc-no-cover'>
   <div class='mdui-container'>
-  <div class='mdui-typo'>
- <blockquote><p>学校已经解封了,</p><p>本站的使命也已经完成。</p><p>本站将于12月07日关闭,</p><p>各位，有缘江湖再见!</p><footer>Roy</footer></blockquote>
-</div> 
- <p>邀请您来回答<a href='https://www.zhihu.com/question/426380152' target='_blank'>如何看待东北大学仍然封闭式管理？</a></p>
- <p>高级玩法：<a href='../doc/' target='_blank'>URL改写教程</a></p>
+ <p>高级玩法：<a href='/ios.pdf' target='_blank'>URL改写教程</a></p>
  <p>有问题请联系QQ:2867984618</p>
 <!--        作者:Roy      -->
 <form action='' method='GET'>
@@ -103,10 +99,13 @@ $form = "
 <div class='mdui-col'>
     <button class='mdui-btn mdui-btn-block mdui-color-blue-200' id='c_btn' onclick='copy()' type='button'><i class='mdui-icon material-icons'>&#xe14d;</i>拷贝链接</button>
 </div>
-
+<br>
+<div class='mdui-col'>
+    <button class='mdui-btn mdui-btn-block mdui-color-theme-400' id='cf_btn' onclick='copyconf()' type='button'><i class='mdui-icon material-icons'>&#xe87b;</i>拷贝Shadowrocket配置</button>
+</div>
 <br><br>
 <div class='mdui-col'>
- <p><a href='https://neu.roy233.com' target='_blank'>站点1</a> | <a href='http://123.57.245.184/entrance/' target='_blank'>站点2</a></p>
+ <p><a href='https://github.com/rroy233/NEU_entrance' target='_blank'>Github</a>
 </div>
 
 
@@ -160,7 +159,40 @@ $form = "
     }
     
   }
-  
+  function copyconf(){
+    var name = document.getElementById('f_name').value;
+    var id = document.getElementById('f_id').value;
+    var entrance = document.getElementById('f_entrance').value;
+    var copy_btn = document.getElementById('cf_btn');
+    var pro_func = document.getElementById('pro_func');
+    var text = '已拷贝至剪切板';
+    copy_btn.removeAttribute('onclick');
+    
+    
+    
+    if(pro_func.style.display=='none'){
+        copy_btn.setAttribute('data-clipboard-text',document.URL+'?ios_conf=1&name='+encodeURI(name)+'&id='+encodeURI(id)+'&entrance='+encodeURI(entrance));
+    }else{
+        var color = document.getElementById('f_color').value;
+        var icon = document.getElementById('f_icon').value;
+        copy_btn.setAttribute('data-clipboard-text',document.URL+'?ios_conf=1&name='+encodeURI(name)+'&id='+encodeURI(id)+'&entrance='+encodeURI(entrance)+'&c_color='+encodeURI(color)+'&b_icon='+encodeURI(icon));
+        text = '拷贝成功！';
+    }
+    
+    new ClipboardJS('#cf_btn');
+    copy_btn.innerHTML = text;
+    
+    
+    document.getElementById('cf_btn').click();
+    
+    if(pro_func.style.display=='none'){
+        copy_btn.setAttribute('class','mdui-btn mdui-btn-block mdui-color-blue-50');
+        copy_btn.setAttribute('disabled','disabled');
+    }else{
+        copy_btn.setAttribute('class','mdui-btn mdui-btn-block mdui-color-red-900');
+    }
+    
+  }
   function show(){
     var pro_func = document.getElementById('pro_func');
     var color_input = document.getElementById('f_color');
@@ -287,13 +319,25 @@ if($_GET['c_color'] =='' or $_GET['b_icon']==''){
 }
 
 
-
-if ($_GET['name'] == "") {
+if($_GET['ios_conf']==1){
+    ios_cof();
+}elseif ($_GET['name'] == "") {
    echo $form;
 } else {
    echo $code;
 }
 
-
+function ios_cof(){
+    //ios配置文件生成 2021年05月18日
+    $conf_file_data = file_get_contents("shadowrocket.tpl");
+    $url = "https://neu.roy233.com/?name=".urlencode($_GET['name'])."&id=".urlencode($_GET['id'])."&entrance=".urlencode($_GET['entrance']);
+    if($_GET['c_color'] !='' or $_GET['b_icon'] !=''){
+        $url = $url."&c_color=".$_GET['c_color']."&b_icon=".$_GET['b_icon'];
+    }
+    $conf_file_data = str_replace('{{url_replace}}',$url,$conf_file_data);
+    header('content-disposition: attachment; filename='.$_GET['name']."_".$_GET['entrance'].".conf");
+    header('content-type: application/octet-stream; charset=utf-8');
+    echo $conf_file_data;
+}
 ?>
 
