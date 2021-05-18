@@ -216,7 +216,7 @@ $form = "
 </script>
 <script>var $$ = mdui.JQ;</script>
 ";
-
+date_default_timezone_set('PRC');
 
 
 $name ="李子維";
