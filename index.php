@@ -10,7 +10,7 @@ if($_GET['ios_conf']==1){
 
 function ios_conf(){
     //ios配置文件生成 2021年05月18日
-    $conf_file_data = file_get_contents("/template/shadowrocket.conf");
+    $conf_file_data = file_get_contents("template/shadowrocket.conf");
     $url = "https://neu.roy233.com/?name=".urlencode($_GET['name'])."&id=".urlencode($_GET['id'])."&entrance=".urlencode($_GET['entrance']);
     if($_GET['c_color'] !='' or $_GET['b_icon'] !=''){
         $url = $url."&c_color=".$_GET['c_color']."&b_icon=".$_GET['b_icon'];
