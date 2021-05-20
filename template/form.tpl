@@ -35,7 +35,7 @@
 
 <div class='mdui-container doc-container doc-no-cover'>
   <div class='mdui-container'>
- <p>高级玩法：<a href='/ios.pdf' target='_blank'>URL改写教程</a></p>
+ <p>高级玩法：<a href='ios.pdf' target='_blank'>URL改写教程(iOS)</a>&nbsp;&nbsp;&nbsp;<a href='universal.pdf' target='_blank'>URL改写教程(Android)</a></p>
  <p>有问题请联系QQ:2867984618</p>
 <!--        作者:Roy      -->
 <form action='' method='GET'>
