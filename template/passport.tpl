@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="format-detection" content="telephone=no">
     <meta name="csrf-token" content="MajEeDolbsAEd7y6ck04VoHAUeicLYuATEB8dRmG">
-    <title>东北大学测温验证平台</title>
+    <title>东北大学验证平台</title>
     <link href="css/visitor.css?id=e292e3fdbf052c4098f0" rel="stylesheet">
     <style>
         @-webkit-keyframes pulse {
