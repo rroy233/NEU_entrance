@@ -21,7 +21,7 @@ function ios_conf(){
     echo $conf_file_data;
 }
 function show_form(){
-    echo file_get_contents("template/form.tpl");
+    echo file_get_contents("template/form2.html");
 }
 function show_passport(){
     $tpl = file_get_contents("template/passport.tpl");

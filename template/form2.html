@@ -1,0 +1,285 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no'/>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'/>
+    <meta name='renderer' content='webkit'>
+    <meta name='format-detection' content='telephone=no'>
+    <meta http-equiv='Cache-Control' content='no-siteapp'/>
+    <title>生成通行许可</title>
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <link href='../css/visitor.css?id=e292e3fdbf052c4098f0' rel='stylesheet'>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+</head>
+<body>
+<div id="app">
+    <v-app id="inspire">
+        <v-app-bar app>
+            <v-toolbar-title>生成通行许可</v-toolbar-title>
+            <v-snackbar
+                    timeout=3000
+                    max-height="48px"
+                    v-model="config.alert"
+                    :color="config.alert_type"
+                    transition="slide-x-reverse-transition"
+                    absolute
+                    top
+                    outlined
+                    right
+            >
+                {{ config.alert_text }}
+            </v-snackbar>
+        </v-app-bar>
+
+        <v-main>
+        
+        <v-container>
+            <v-alert
+            border="right"
+            colored-border
+            type="info"
+            elevation="2"
+            class="mt-12"
+            >
+            高级玩法-URL改写：<a href='ios.pdf' target='_blank'>iOS</a>&nbsp;&nbsp;&nbsp;<a href='https://github.com/rroy233/NEU_entrance/blob/main/universal.md' target='_blank'>Android(有缺陷)</a>
+            <br>
+            有问题请联系QQ:2867984618
+            <br>
+            <a href='https://github.com/rroy233/NEU_entrance' target='_blank'>Github</a>
+            </v-alert>
+            <v-form
+                        ref="form"
+                        lazy-validation
+                >
+
+                    <v-text-field
+                            v-model="name"
+                            label="姓名"
+                    ></v-text-field>
+                    <v-text-field
+                            v-model="id"
+                            label="密码"
+                    ></v-text-field>
+                    <v-text-field
+                            v-model="entrance"
+                            label="入口名(格式:xx校区xx门)"
+                    ></v-text-field>
+
+                    <v-btn
+                        class="my-4"
+                        :disabled="pro"
+                        @click="show_pro"
+                    >
+                        显示高级选项
+                    </v-btn>
+
+
+                    <!-- 高级选项 -->
+                    <div
+                        class="my-3"
+                        v-show="pro"
+                    >
+                        <v-card
+                            class="pa-4"
+                        >
+                            <v-card-tittle>
+                                <div class="text-h5">
+                                    高级选项
+                                </div>
+                                <div class="text-subtittle-1">
+                                    此时预览或拷贝链接前往的页面样式将被指定按这两个参数来生成！请您务必知道其可能带来的后果，若不知道，请刷新页面并不要开启高级选项！
+                                </div>
+                                <div class="text-h6">
+                                    预览
+                                </div>
+
+                                <div v-bind:style="{color:'#'+color}">
+                                    <i v-bind:class="icon_class" style='font-size: 4em;'></i>
+                                </div>
+                                
+                            </v-card-tittle>
+                            <v-text-field
+                            v-model="color"
+                            label="颜色(HEX颜色代码)"
+                            ></v-text-field>
+                            <v-text-field
+                                v-model="icon"
+                                label="图标名(前往fontawesome图标库拷贝icon name)"
+                            ></v-text-field>
+                            <v-card-tittle>
+                                <div class="text-h5">
+                                    快速选项
+                                </div>
+                                <v-col cols="6">
+                                    <v-btn
+                                        depressed
+                                        @click="set_style('006633','arrow-circle-up')"
+                                    >
+                                        绿色-圆角箭头
+                                    </v-btn>
+                                    <v-btn
+                                        depressed
+                                        @click="set_style('EEF926','arrow-circle-up')"
+                                    >
+                                        黄色-圆角箭头
+                                    </v-btn>
+                                </v-col>
+
+                        </v-card>
+                    </div>
+                    <!-- 高级选项 -->
+
+                    <v-btn
+                            block
+                            class="my-4"
+                            @click="submit()"
+                            @keyup.enter.native="submit"
+                            depressed
+                            color="primary"
+                    >
+                        预览
+                    </v-btn>
+
+                </v-form>
+                <v-btn
+                            block
+                            class="my-4"
+                            outlined
+                            color="indigo"
+                            @click="get_url"
+                            class="copy-btn"
+                            data-clipboard-text="url"
+                    >
+                        生成链接
+                </v-btn>
+                <v-divider></v-divider>
+                <v-btn
+                            block
+                            class="my-4"
+                            outlined
+                            color="indigo"
+                            @click="get_conf_url"
+                            class="copy-btn"
+                            data-clipboard-text="url"
+                    >
+                        生成shadowrocket配置地址
+                </v-btn>
+
+                <v-dialog
+                v-model="dialog"
+                width="500"
+                >
+                <v-card>
+                    <v-card-title class="text-h6 grey lighten-2 mb-4">
+                      完整复制下方的地址
+                    </v-card-title>
+            
+                    <v-card-text>
+                      {{url}}
+                    </v-card-text>
+            
+                    <v-divider></v-divider>
+            
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        color="primary"
+                        text
+                        @click="dialog = false"
+                      >
+                        关闭
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+
+        </v-container>
+
+    </v-app>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.js"></script>
+
+<script>
+    new Vue({
+        el: '#app',
+        vuetify: new Vuetify(),
+        data:{
+            baseurl:"",
+            id:"351238",
+            name:"李子維",
+            entrance:"南湖校区北门",
+            color:"",
+            icon:"",
+            icon_class:"",
+            config:{
+                alert_text:"",
+                alert_type:"info",
+                alert: false,
+            },
+            pro:false,
+            url:"",
+            dialog:false,
+        },
+        mounted:function(){
+            var _this = this;
+            document.onkeydown = function(e) {
+                let key = window.event.keyCode;
+                if (key == 13) {
+                    _this.submit();
+                }
+            };
+            this.baseurl=window.location.origin
+        },
+        methods:{
+            submit : function (){
+                window.location.href=this.url = '?name='+encodeURI(this.name)+'&id='+encodeURI(this.id)+'&entrance='+encodeURI(this.entrance)+'&c_color='+encodeURI(this.color)+'&b_icon='+encodeURI(this.icon)
+            },
+            get_url(){
+                // 如果有二级目录需要修改这里
+                this.url = this.baseurl + '/?name='+encodeURI(this.name)+'&id='+encodeURI(this.id)+'&entrance='+encodeURI(this.entrance)+'&c_color='+encodeURI(this.color)+'&b_icon='+encodeURI(this.icon)
+                this.dialog = true
+            },
+            get_conf_url(){
+                // 如果有二级目录需要修改这里
+                this.url = this.baseurl + '/?ios_conf=1&name='+encodeURI(this.name)+'&id='+encodeURI(this.id)+'&entrance='+encodeURI(this.entrance)+'&c_color='+encodeURI(this.color)+'&b_icon='+encodeURI(this.icon)
+                this.dialog = true
+            },
+            set_style(color,icon){
+                this.color = color
+                this.icon = icon
+            },
+            show_pro(){
+                this.pro = true
+                this.color = "006633"
+                this.icon = "arrow-circle-up"
+            },
+            success: function(text){
+                this.config.alert = !this.config.alert
+                this.config.alert_text = text
+                this.config.alert_type = "success"
+            },
+            error: function (err){
+                this.config.alert = !this.config.alert
+                this.config.alert_text = err
+                this.config.alert_type = "error"
+            },
+            show_loading: function (){
+                this.loader = 'loading'
+            },
+        },
+        watch:{
+            icon:function(val){
+                this.icon_class = "fa fa-"+val
+            }
+        },
+        computed:{
+        },
+    })
+</script>
+</body>
+</html>
